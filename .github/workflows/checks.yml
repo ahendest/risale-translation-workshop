@@ -1,0 +1,26 @@
+name: checks
+on: [push, pull_request]
+jobs:
+  # Both areas at the commits this workshop pins.
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Translation area
+        working-directory: agentic-translate
+        run: |
+          env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools -p 'test_*.py'
+          python3 -B tools/knowledge.py --config knowledge/config.json init
+          python3 -B tools/knowledge.py --config knowledge/config.json import-terms --input knowledge/knowledge.jsonl
+          python3 -B tools/knowledge.py --config knowledge/config.json import-lugat --input knowledge/sources/db_lugat.sql
+          python3 -B tools/knowledge.py --config knowledge/config.json integrity
+      - name: Terminology area
+        working-directory: punctual-term-translation
+        run: |
+          env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+          python3 -B tools/terms.py check

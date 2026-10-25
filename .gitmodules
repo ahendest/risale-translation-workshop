@@ -1,0 +1,6 @@
+[submodule "agentic-translate"]
+	path = agentic-translate
+	url = https://github.com/ahendest/agentic-translate.git
+[submodule "punctual-term-translation"]
+	path = punctual-term-translation
+	url = https://github.com/ahendest/punctual-term-translation.git
