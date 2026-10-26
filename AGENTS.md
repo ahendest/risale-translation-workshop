@@ -3,7 +3,9 @@
 Read the AGENTS.md in the active working area. The workshop repository holds both areas as Git
 submodules; preserve every Git history and user changes.
 The target language is a project variable: never write language-specific rules into tools,
-schemas or instructions. Name no model or vendor; a reviewer is a fresh agent of your own model.
+schemas or instructions. The accepted source languages (Arabic, Turkish) are data in
+`agentic-translate/knowledge/config.json`. Name no model or vendor; a reviewer is a fresh
+agent of your own model.
 
 ## Always do
 
@@ -14,8 +16,8 @@ schemas or instructions. Name no model or vendor; a reviewer is a fresh agent of
 - In punctual-term-translation, follow term-translator and its Voice section in
   `.agents/skills/term-translator/SKILL.md`. New translations need two alternatives, their footnotes,
   and term-reviewer. The work in progress is visible in `results/results.md`.
-- Keep exact human terminology approval in punctual-term-translation and book placement
-  and validation in agentic-translate.
+- Keep exact human terminology approval in punctual-term-translation and first-use notes
+  and book validation in agentic-translate.
 - Keep experiments disposable; preserve genuine research, sources and approved wording.
 
 ## Ask first

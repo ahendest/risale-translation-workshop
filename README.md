@@ -2,7 +2,8 @@
 
 The Risalero workshop translates Islamic books into other languages with AI agents, while a
 person keeps control of the religious and technical terms. It was built for the Risale-i Nur
-collection and works for any book you have as an EPUB file, in any pair of languages.
+collection and works for any Turkish or Arabic book you have as an EPUB file, translated into
+any language.
 
 ## Why it exists
 
