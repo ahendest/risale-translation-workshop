@@ -8,8 +8,8 @@ any language.
 ## Why it exists
 
 A good translation must not flatten words such as *namaz*, *nefs* or *abdest* into a general
-word. The workshop keeps such a term as the author wrote it, adds its approved translation in
-parentheses, and explains it once, in a short note at its first use in the book. You approve
+word. The workshop keeps such a term as the author wrote it and adds its approved translation:
+in parentheses with a short note at its first use in the book, and without parentheses later. You approve
 the exact wording of every term. Approved terms are stored once and reused in every book of the
 same language.
 

@@ -9,6 +9,7 @@ agent of your own model.
 
 ## Always do
 
+- Write instructions briefly, as what to do.
 - Use the single `agentic-translate/knowledge/knowledge.sqlite`; every write refreshes
   `agentic-translate/knowledge/knowledge.jsonl`, which is the tracked text copy.
 - Check existing terminology in agentic-translate before requesting it. Send missing terms
