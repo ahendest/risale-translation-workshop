@@ -12,11 +12,6 @@ agent of your own model.
 - Write instructions briefly, as what to do.
 - Use the single `agentic-translate/knowledge/knowledge.sqlite`; every write refreshes
   `agentic-translate/knowledge/knowledge.jsonl`, which is the tracked text copy.
-- Check existing terminology in agentic-translate before requesting it. Send missing terms
-  as `term (source-segment.md:line)`; do not repeat discovery in punctual-term-translation.
-- In punctual-term-translation, follow term-translator and its Voice section in
-  `.agents/skills/term-translator/SKILL.md`. New translations need two alternatives, their footnotes,
-  and term-reviewer. The work in progress is visible in `results/results.md`.
 - Keep exact human terminology approval in punctual-term-translation and first-use notes
   and book validation in agentic-translate.
 - Keep experiments disposable; preserve genuine research, sources and approved wording.
@@ -24,7 +19,6 @@ agent of your own model.
 ## Ask first
 
 - Obtain explicit human approval of exact new equivalents and footnotes before publication.
-- Ask for missing source identity only when the supplied location cannot be resolved.
 
 ## Never do
 
