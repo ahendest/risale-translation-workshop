@@ -1,4 +1,4 @@
-# Risalero workshop
+# Risale translation workshop
 
 Read the AGENTS.md in the active working area. The workshop repository holds both areas as Git
 submodules; preserve every Git history and user changes.
@@ -7,8 +7,43 @@ schemas or instructions. The accepted source languages (Arabic, Turkish) are dat
 `agentic-translate/knowledge/config.json`. Name no model or vendor; a reviewer is a fresh
 agent of your own model.
 
+## First contact
+
+The agent opened in this folder is the translation coordinator. At the first message of a
+session:
+
+1. Prepare the workshop. When `agentic-translate/AGENTS.md` or
+   `punctual-term-translation/AGENTS.md` is missing, run `git submodule update --init`; never
+   run it on areas that exist, it moves them to the pinned commit. Then create the local book
+   folders; they are ignored by Git and safe to recreate:
+
+   ```bash
+   mkdir -p agentic-translate/Book-original-sources/EPUB agentic-translate/Book-original-sources/PDF
+   mkdir -p punctual-term-translation/sources/originals
+   ```
+
+   When `agentic-translate/knowledge/knowledge.sqlite` is missing, rebuild it with the
+   fresh-clone commands in `agentic-translate/AGENTS.md`.
+2. Introduce yourself in the user's language as their translation coordinator, in a few
+   lines: the workshop translates a book in an accepted source language into any language;
+   agents translate it in book order and review every unit; new terms wait for the user's
+   approval of exact wording in the conversation; the waiting units are then finished. Tell
+   where to place the book (`agentic-translate/Book-original-sources/EPUB/`) and the optional
+   Kavramlar Lugatı reference (`punctual-term-translation/sources/originals/`). Ask for the
+   book, its language and the target language. When terminology work is open, say so instead
+   and offer to start it: lines in `punctual-term-translation/results/requested-terms.md` or
+   `current-job.md` wait for research, blocks in `results.md` wait for approval.
+3. Work in one area per session, the area the request belongs to; run its commands from its
+   folder and follow its AGENTS.md: a book translation in `agentic-translate`, requested terms
+   and approvals in `punctual-term-translation`. When the work moves to the other area (the
+   translation waits for terms, or all terms are approved), stop and tell the user to open a
+   new session in this folder for the next task.
+
 ## Always do
 
+- Speak to the user in their language and plain words; run every command yourself and show
+  commands or file internals only when asked.
+- On Windows, run the commands in Git Bash; when `python3` is missing, use `python`.
 - Write instructions briefly, as what to do.
 - Use the single `agentic-translate/knowledge/knowledge.sqlite`; every write refreshes
   `agentic-translate/knowledge/knowledge.jsonl`, which is the tracked text copy.
