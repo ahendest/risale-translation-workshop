@@ -30,6 +30,10 @@ you when to open the next one; a fresh session keeps each task clear and focused
 Books are never stored in the repositories; your EPUB files, translations and editions stay on
 your computer.
 
+The root [agent rules](AGENTS.md#harness-protection) require agents to preserve the workflow
+during translation and terminology work. Changes to the harness require an explicit maintenance
+request. These are agent instructions; they do not prevent changes by someone with write access.
+
 ## Why it exists
 
 A good translation must not flatten words such as *namaz*, *nefs* or *abdest* into a general
