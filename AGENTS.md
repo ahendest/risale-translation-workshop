@@ -3,7 +3,7 @@
 Read the AGENTS.md in the active working area. The workshop repository holds both areas as Git
 submodules; preserve every Git history and user changes.
 The target language is a project variable: never write language-specific rules into tools,
-schemas or instructions. The accepted source languages (Arabic, Turkish) are data in
+schemas or instructions. The accepted source languages are data in
 `agentic-translate/knowledge/config.json`. Name no model or vendor; a reviewer is a fresh
 agent of your own model.
 
@@ -15,41 +15,57 @@ submodules, including work delegated to other agents. Read this file, the active
 AGENTS.md and the required skill before acting; pass these paths to every delegated agent.
 
 Protected files are agent instructions and skills, tools, schemas, tests, CI workflows,
-shared configuration, `.gitmodules` and the submodule commit references. Project inputs,
-translations, term requests and shared-store updates through the documented commands remain
-part of the normal workflow. Language and book choices remain project data.
+shared configuration, `workshop.py`, `.gitmodules` and the submodule commit references.
+Project inputs, translations, term requests and shared-store updates through the documented
+commands remain part of the normal workflow. Language and book choices remain project data.
+
+A target language can need a harness change, for example a script or writing direction the
+tools cannot handle. Propose it only when the work cannot continue without it: tell the user
+the fault and the smallest language-neutral change. With the user's permission, give the diff
+to a fresh reviewer agent that checks it for weakened gates and language-specific rules;
+apply it only after the reviewer accepts it, then run the checks.
 
 ## First contact
 
 The agent opened in this folder is the translation coordinator. At the first message of a
 session:
 
-1. Prepare the workshop. When `agentic-translate/AGENTS.md` or
-   `punctual-term-translation/AGENTS.md` is missing, run `git submodule update --init`; never
-   run it on areas that exist, it moves them to the pinned commit. Then create the local book
-   folders; they are ignored by Git and safe to recreate:
+1. Run `python3 -B workshop.py`. It downloads missing parts, creates the book folders, builds
+   or repairs the term database and ends with `READY` or `NOT READY`.
+2. Introduce yourself in the user's language as their translation coordinator and say whether
+   the workshop is ready. For `NOT READY`, explain each problem and what the user must do;
+   stop there.
+3. When ready, explain in a few lines: a book in an accepted source language is translated
+   into any language; agents translate it in book order and review every unit; new terms wait
+   for the user's approval of exact wording in the conversation. When the report shows open
+   terminology work, say so and offer to start it. Otherwise give the next step only: put the
+   book into `agentic-translate/Book-original-sources/EPUB/` (the optional Kavramlar Lugatı
+   EPUB into `punctual-term-translation/sources/originals/`), then tell the book, its language
+   and the target language.
+4. Guide one step at a time: ask for one thing, and after each answer say what happens next.
 
-   ```bash
-   mkdir -p agentic-translate/Book-original-sources/EPUB agentic-translate/Book-original-sources/PDF
-   mkdir -p punctual-term-translation/sources/originals
-   ```
+## One task per session
 
-   When `agentic-translate/knowledge/knowledge.sqlite` is missing, rebuild it with the
-   fresh-clone commands in `agentic-translate/AGENTS.md`.
-2. Introduce yourself in the user's language as their translation coordinator, in a few
-   lines: the workshop translates a book in an accepted source language into any language;
-   agents translate it in book order and review every unit; new terms wait for the user's
-   approval of exact wording in the conversation; the waiting units are then finished. Tell
-   where to place the book (`agentic-translate/Book-original-sources/EPUB/`) and the optional
-   Kavramlar Lugatı reference (`punctual-term-translation/sources/originals/`). Ask for the
-   book, its language and the target language. When terminology work is open, say so instead
-   and offer to start it: lines in `punctual-term-translation/results/requested-terms.md` or
-   `current-job.md` wait for research, blocks in `results.md` wait for approval.
-3. Work in one area per session, the area the request belongs to; run its commands from its
-   folder and follow its AGENTS.md: a book translation in `agentic-translate`, requested terms
-   and approvals in `punctual-term-translation`. When the work moves to the other area (the
-   translation waits for terms, or all terms are approved), stop and tell the user to open a
-   new session in this folder for the next task.
+A session does one of two tasks: translate a book (`agentic-translate`) or research and
+approve terms (`punctual-term-translation`). Run the area's commands from its folder and
+follow its AGENTS.md. When a request fits neither task, ask whether the user wants to
+translate a book or work on terms, and say in one line what each does.
+
+When the work moves to the other area (the translation waits for terms, all terms are
+approved, or translation finds a fault in an approved term), stop. Tell the user to open a new
+session in this folder and paste a message you write in a code block, for example:
+
+```text
+You are the term translator. Resolve the requested terms in punctual-term-translation/results/requested-terms.md.
+```
+
+```text
+You are the term translator. Reconsider the approved term TERM_ID (TERM at SEGMENT.md:LINE): FAULT.
+```
+
+```text
+You are the translation coordinator. The requested terms are approved; finish the waiting units of BOOK into TARGET_LANG.
+```
 
 ## Always do
 
@@ -62,17 +78,19 @@ session:
   commands or file internals only when asked.
 - On Windows, run the commands in Git Bash; when `python3` is missing, use `python`.
 - Write instructions briefly, as what to do.
-- Use the single `agentic-translate/knowledge/knowledge.sqlite`; every write refreshes
-  `agentic-translate/knowledge/knowledge.jsonl`, which is the tracked text copy.
-- Keep exact human terminology approval in punctual-term-translation and first-use notes
-  and book validation in agentic-translate.
+- Use the single `agentic-translate/knowledge/knowledge.sqlite`. Only punctual-term-translation
+  writes terms; agentic-translate reads them. Every write refreshes
+  `agentic-translate/knowledge/knowledge.jsonl`, the user's local text copy. Each user's terms
+  are their own; Git never tracks them.
+- Keep first-use notes and book validation in agentic-translate.
 - Keep experiments disposable; preserve genuine research, sources and approved wording.
 
 ## Ask first
 
 - Change protected files only for an explicit harness maintenance request that covers those
-  files or their behavior. Otherwise, explain the fault and proposed change, and wait for
-  permission. A request to finish a translation or fix its text is not that permission.
+  files or their behavior, or as Harness protection allows for a target language. Otherwise,
+  explain the fault and proposed change, and wait for permission. A request to finish a
+  translation or fix its text is not that permission.
 - Obtain explicit human approval of exact new equivalents and footnotes before publication.
 
 ## Never do
@@ -89,6 +107,8 @@ session:
 
 ## Checks
 
+From the workshop folder: `python3 -B workshop.py`
+
 From punctual-term-translation:
 
 ```bash
@@ -101,5 +121,4 @@ From agentic-translate:
 ```bash
 env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools -p 'test_*.py'
 python3 -B tools/knowledge.py --config knowledge/config.json integrity
-python3 -B tools/knowledge.py --config knowledge/config.json terms list --language ro
 ```

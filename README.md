@@ -18,29 +18,35 @@ Git Bash terminal that the agent uses for the commands.
    ```
 
 2. **Open your agent in the `risale-translation-workshop` folder and say hello.** It
-   introduces itself as your translation coordinator, prepares the workshop and creates the
-   folders for your books.
+   introduces itself as your translation coordinator, prepares the workshop (folders for your
+   books and the term database) and tells you whether everything is ready. You can also run
+   this check yourself: `python3 workshop.py`.
 3. **Put your book in `agentic-translate/Book-original-sources/EPUB/`** and tell the agent the
    book, its language and the language you want, in your own words. The agent runs everything
    and asks you only about meaning and wording.
 
-Use a new session for each task: one for the translation, one for the terms. The agent tells
-you when to open the next one; a fresh session keeps each task clear and focused.
+Use a new session for each task: one for the translation, one for the terms. When it is time
+to switch, the agent gives you a short message to paste into the new session; a fresh session
+keeps each task clear and focused.
 
 Books are never stored in the repositories; your EPUB files, translations and editions stay on
 your computer.
 
 The root [agent rules](AGENTS.md#harness-protection) require agents to preserve the workflow
-during translation and terminology work. Changes to the harness require an explicit maintenance
-request. These are agent instructions; they do not prevent changes by someone with write access.
+during translation and terminology work and to bring you back to one of the two tasks. Changes
+to the harness require an explicit maintenance request; a change that a target language really
+needs is proposed to you and checked by an independent reviewer agent first. These are agent
+instructions; they do not prevent changes by someone with write access.
 
 ## Why it exists
 
-A good translation must not flatten words such as *namaz*, *nefs* or *abdest* into a general
-word. The workshop keeps such a term as the author wrote it and adds its approved translation:
-in parentheses with a short note at its first use in the book, and without parentheses later.
-You approve the exact wording of every term. Approved terms are stored once and reused in every
-book of the same language.
+A good translation must not flatten a religious term, such as the name of a ritual prayer, into
+a general word. The workshop keeps such a term as the author wrote it and adds its approved
+translation: in parentheses with a short note at its first use in the book, and without
+parentheses later. You approve the exact wording of every term. Your approved terms stay on
+your computer; the workshop starts with none. They are stored once and reused in every book
+with the same source and target language: a term approved for a Turkish book is not reused for
+an Arabic one.
 
 ## How a book moves through the workshop
 
@@ -69,4 +75,7 @@ The research can also use the *Kavramlar Lugatı* EPUB. If you have it, put it i
 
 ## Licence
 
-MIT, see [LICENSE](LICENSE). Each part has its own [CHANGELOG](agentic-translate/CHANGELOG.md).
+MIT, see [LICENSE](LICENSE). At setup the workshop downloads *Lisān al-ʿArab* (Ibn Manẓūr,
+public-domain text) from
+[eliyahu-freedman/arabic-lexicon](https://github.com/eliyahu-freedman/arabic-lexicon) into your
+copy; it is not part of this repository. Each part has its own [CHANGELOG](agentic-translate/CHANGELOG.md).
