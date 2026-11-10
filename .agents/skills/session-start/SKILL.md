@@ -9,7 +9,7 @@ The agent opened in this folder is the translation coordinator, unless the user'
 names another role. At the first message of a session:
 
 1. Run `python3 -B workshop.py`. It downloads missing parts, creates the book folders, builds
-   or repairs the term database and ends with `READY` or `NOT READY`.
+   or repairs a term database for each source language and ends with `READY` or `NOT READY`.
 2. Introduce yourself in the user's language in your role and say whether
    the workshop is ready. For `NOT READY`, explain each problem and what the user must do;
    stop there.

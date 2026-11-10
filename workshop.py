@@ -25,9 +25,10 @@ def run(args, cwd):
     return subprocess.run(args, cwd=cwd, capture_output=True, text=True, encoding='utf-8')
 
 
-def knowledge(*args):
-    """One store command through the translation area's tool; returns its parsed JSON output."""
-    result = run([sys.executable, '-B', 'tools/knowledge.py', '--config', 'knowledge/config.json', *args], TRANSLATE)
+def knowledge(source, *args):
+    """One command on the store of a source language through the translation area's tool; returns its parsed JSON."""
+    result = run([sys.executable, '-B', 'tools/knowledge.py', '--config', 'knowledge/config.json',
+                  '--source-language', source, *args], TRANSLATE)
     try:
         return json.loads(result.stdout)
     except ValueError:
@@ -48,39 +49,62 @@ def areas():
     return True
 
 
-def store():
-    db = TRANSLATE / 'knowledge/knowledge.sqlite'
-    if db.exists() and not knowledge('integrity')['ok']:
-        # The tracked text copy holds every approved term; an old or damaged store is set aside, not deleted.
-        aside = db.with_name(f'knowledge.sqlite.old-{time.strftime("%Y%m%d-%H%M%S")}')
-        for suffix in ('', '-wal', '-shm'):
-            part = Path(str(db) + suffix)
-            if part.exists():
-                part.rename(Path(str(aside) + suffix))
-        notes.append(f'The old term database was set aside as {aside.name}; a new one was built')
+def set_aside(db):
+    """Move a store and its SQLite side files out of use; nothing is deleted."""
+    aside = db.with_name(f'{db.name}.old-{time.strftime("%Y%m%d-%H%M%S")}')
+    for suffix in ('', '-wal', '-shm'):
+        part = Path(str(db) + suffix)
+        if part.exists():
+            part.rename(Path(str(aside) + suffix))
+    return aside.name
+
+
+def split_single_store(config):
+    """Once: the earlier single store becomes one store per source language; its text copy is split by language."""
+    folder = TRANSLATE / 'knowledge'
+    old = folder / 'knowledge.jsonl'
+    if old.is_file():
+        records = [json.loads(line) for line in lines(old)]
+        for source in config['source_languages']:
+            own = [line for line, r in zip(lines(old), records) if r.get('source_language') == source]
+            target = folder / f'{source}.jsonl'
+            if own and not target.exists():
+                target.write_text(''.join(line + '\n' for line in own), encoding='utf-8')
+        old.rename(folder / 'knowledge.jsonl.old')
+        notes.append('Your approved terms moved into one store per source language; the old text copy is knowledge.jsonl.old')
+    if (folder / 'knowledge.sqlite').exists():
+        set_aside(folder / 'knowledge.sqlite')
+
+
+def store(source, dictionaries):
+    db = TRANSLATE / f'knowledge/{source}.sqlite'
+    if db.exists() and not knowledge(source, 'integrity')['ok']:
+        notes.append(f'The {source} term database was set aside as {set_aside(db)}; a new one was built')
     if not db.exists():
         # Each user's terms are their own: a new database starts empty, or from this user's local text copy.
-        backup = TRANSLATE / 'knowledge/knowledge.jsonl'
-        steps = [('init',), ('import-lugat', '--input', 'knowledge/sources/db_lugat.sql')]
-        if backup.is_file() and backup.read_text(encoding='utf-8').strip():
-            steps.insert(1, ('import-terms', '--input', 'knowledge/knowledge.jsonl'))
-            notes.append('Your approved terms were restored from knowledge/knowledge.jsonl')
+        steps = [('init',)]
+        if lines(TRANSLATE / f'knowledge/{source}.jsonl'):
+            steps.append(('import-terms', '--input', f'knowledge/{source}.jsonl'))
+            notes.append(f'Your approved terms for {source} books were restored from knowledge/{source}.jsonl')
+        if 'lugat' in dictionaries:
+            steps.append(('import-lugat', '--input', 'knowledge/sources/db_lugat.sql'))
         for step in steps:
-            result = knowledge(*step)
+            result = knowledge(source, *step)
             if not result['ok']:
-                problems.append(f'Term database setup failed at {step[0]}: {result["error"]["message"]}')
+                problems.append(f'The {source} term database setup failed at {step[0]}: {result["error"]["message"]}')
                 return
-    lisan()
-    check = knowledge('integrity')
+    if 'lisan-al-arab' in dictionaries:
+        lisan(source)
+    check = knowledge(source, 'integrity')
     if not check['ok']:
-        problems.append('Term database check failed: ' + check['error']['message'])
+        problems.append(f'The {source} term database check failed: ' + check['error']['message'])
         return
     item = check['items'][0]
-    dictionaries = ', '.join(f'{name} {count}' for name, count in item['dictionaries'].items())
-    notes.append(f'Term database ready: {item["terms"]} approved terms; dictionary entries: {dictionaries}')
+    found = ', '.join(f'{name} {count}' for name, count in item['dictionaries'].items()) or 'none'
+    notes.append(f'{source} books: {item["terms"]} approved terms; dictionary entries: {found}')
 
 
-def lisan():
+def lisan(source):
     """Download the Arabic dictionary once and import it; research works without it, so a failure is a warning."""
     LISAN_DIR.mkdir(parents=True, exist_ok=True)
     try:
@@ -95,7 +119,7 @@ def lisan():
         warnings.append(f'The Arabic dictionary (Lisan al-Arab) could not be downloaded ({error}); '
                         'term research works without it. Run this again with an internet connection.')
         return
-    result = knowledge('import-lisan', '--input', LISAN_DIR.relative_to(TRANSLATE).as_posix())
+    result = knowledge(source, 'import-lisan', '--input', LISAN_DIR.relative_to(TRANSLATE).as_posix())
     if not result['ok']:
         warnings.append('The Arabic dictionary could not be imported: ' + result['error']['message'])
 
@@ -104,8 +128,7 @@ def lines(path):
     return [line for line in path.read_text(encoding='utf-8').splitlines() if line.strip()] if path.is_file() else []
 
 
-def work():
-    config = json.loads((TRANSLATE / 'knowledge/config.json').read_text(encoding='utf-8'))
+def work(config):
     notes.append('Accepted source languages: ' + ', '.join(config['source_languages']) + '; any target language')
     books = sorted(p.name for p in (TRANSLATE / 'Book-original-sources/EPUB').rglob('*.epub'))
     notes.append('Books in Book-original-sources/EPUB: ' + (', '.join(books) if books else 'none yet'))
@@ -126,8 +149,11 @@ def main():
     elif areas():
         for folder in FOLDERS:
             folder.mkdir(parents=True, exist_ok=True)
-        store()
-        work()
+        config = json.loads((TRANSLATE / 'knowledge/config.json').read_text(encoding='utf-8'))
+        split_single_store(config)
+        for source in config['source_languages']:
+            store(source, config.get('dictionaries', {}).get(source, []))
+        work(config)
     for note in notes:
         print('- ' + note)
     for warning in warnings:

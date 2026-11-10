@@ -48,15 +48,16 @@ these gates; run the affected checks before declaring it complete.
   commands or file internals only when asked.
 - On Windows, run the commands in Git Bash; when `python3` is missing, use `python`.
 - Write instructions briefly, as what to do.
-- Use the single `agentic-translate/knowledge/knowledge.sqlite`. Only punctual-term-translation
-  writes terms; agentic-translate reads them. Every write refreshes
-  `agentic-translate/knowledge/knowledge.jsonl`, the user's local text copy. Each user's terms
+- Use one store per source language: `agentic-translate/knowledge/SOURCE_LANG.sqlite` holds
+  that language's dictionaries and the terms approved for its books. Only
+  punctual-term-translation writes terms; agentic-translate reads them. Every write refreshes
+  `agentic-translate/knowledge/SOURCE_LANG.jsonl`, the user's local text copy. Each user's terms
   are their own; Git never tracks them.
 - Keep first-use notes and book validation in agentic-translate.
 
 ## Never do
 
-- Create a second active terminology store or copied glossary.
+- Create a second store for a source language or a copied glossary.
 - Repeat the receiving area's internal workflow in the sending area's instructions.
 - Initialize another repository, commit, push, tag or publish without explicit instruction.
 - Track books: EPUB originals, prepared sources, translations and editions stay local.

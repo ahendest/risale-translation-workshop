@@ -40,10 +40,11 @@ instructions; they do not prevent changes by someone with write access.
 
 ## Why it exists
 
-A good translation must not flatten a religious term, such as the name of a ritual prayer, into
-a general word. The workshop keeps such a term as the author wrote it and adds its approved
-translation: in parentheses with a short note at its first use in the book, and without
-parentheses later. You approve the exact wording of every term. Your approved terms stay on
+A good translation must not flatten a religious term into a general word, and must not burden
+the reader with foreign words that the language can say. A concept with a usual word in your
+language is translated. A term without one is kept as the author wrote it, with its approved
+translation in parentheses and a short note at its first use in the book, and alone later. You
+approve the exact wording of every term. Your approved terms stay on
 your computer; the workshop starts with none. They are stored once and reused in every book
 with the same source and target language: a term approved for a Turkish book is not reused for
 an Arabic one.
